@@ -1,5 +1,5 @@
 import Node from './Node'
-
+require ('locus');
 
 export default class CompleteMe {
   constructor () {
@@ -26,13 +26,24 @@ export default class CompleteMe {
     return this.learnedWords.length;
   }
 
-  // suggest () {
+  suggest (input) {
+    // find the node which represents input (e.g. 'ba')
+    // findNode (input)
+    // check if each child is word and if they have any children
+    // repeat with each child
+  }
   //
-  // }
-  //
-  // findNode () {
-  //
-  // }
+  findNode (input) {
+    let splitArray = input.split('')
+    let currentChar = splitArray.shift();
+    let currentNode = this.root;
+
+    while (currentNode.children[currentChar]) {
+      currentNode = currentNode.children[currentChar];
+      currentChar = splitArray.shift()
+    }
+    return currentNode;
+  }
   //
   // populate () {
   //

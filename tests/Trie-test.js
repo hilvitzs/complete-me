@@ -35,5 +35,34 @@ describe('CompleteMe', () => {
     assert.property(completeMe.root.children['b'].children['a'].children, 't')
   })
 
+  it('the last letter of a word should have a true isWord prop', () => {
+    completeMe.insert('bat')
 
+    assert.deepEqual(completeMe.root.children.a.children.p.children.e.isWord, true)
+  })
+
+  it('after inserting multiple words, the first letter of each word is in root', () => {
+    completeMe.insert('apple')
+    completeMe.insert('boy')
+    completeMe.insert('cat')
+    //Object.keys(completeMe.root.children) // ['a','b','c']
+    // assert.deepEqual(completeMe.root.children['a'].data, 'a')
+    // assert.deepEqual(completeMe.root.children['b'].data, 'b')
+    // assert.deepEqual(completeMe.root.children['c'].data, 'c')
+    assert.deepEqual(Object.keys(completeMe.root.children), ['a', 'b', 'c'])
+  })
+
+  it.skip('suggest should return children nodes which are words ', () => {
+    // completion.insert("pizza")
+    var completeWords = completeMe.suggest("piz")
+
+    assert.deepEqual(completeWords, ["pizza"])
+  })
+
+  it('should find a specific node', () => {
+    completeMe.insert('dog')
+    let foundNode = completeMe.findNode('dog')
+
+    assert.deepEqual(foundNode.data, 'g')
+  })
 })
