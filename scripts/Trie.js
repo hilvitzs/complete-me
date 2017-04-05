@@ -27,12 +27,33 @@ export default class CompleteMe {
   }
 
   suggest (input) {
-    // find the node which represents input (e.g. 'ba')
-    // findNode (input)
-    // check if each child is word and if they have any children
-    // repeat with each child
+    let wordSoFarLetterArray = input.split('');
+    let currentNode = this.root;
+    let suggestions = [];
+
+    wordSoFarLetterArray.forEach( letter => {
+      if (currentNode.children[letter]) {
+        currentNode = currentNode.children[letter];
+        return;
+      }
+    });
+    return suggestions = this.getWord(currentNode, input, suggestions);
   }
-  //
+
+  getWord (currentNode, input, suggestions) {
+    if (currentNode.isWord) {
+      suggestions.push(input);
+    }
+    let nodeChildrenKeys = Object.keys(currentNode.children);
+
+    nodeChildrenKeys.forEach( key => {
+      let nextNode = currentNode.children[key];
+
+      this.getWord(nextNode, input + key, suggestions)
+    });
+    return suggestions;
+  }
+  
   findNode (input) {
     let splitArray = input.split('')
     let currentChar = splitArray.shift();

@@ -53,7 +53,7 @@ describe('CompleteMe', () => {
   })
 
   it.skip('suggest should return children nodes which are words ', () => {
-    // completion.insert("pizza")
+    completeMe.insert("pizza")
     var completeWords = completeMe.suggest("piz")
 
     assert.deepEqual(completeWords, ["pizza"])
