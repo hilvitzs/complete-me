@@ -77,9 +77,7 @@ describe('CompleteMe', () => {
 
     completeMe.select('pi', 'pizza');
 
-    var sortedSuggestions2 = completeMe.suggest('pi')
-
-    assert.deepEqual(sortedSuggestions2[0], 'pizza')
+    assert.deepEqual(sortedSuggestions[0], 'pizza')
   })
 })
 
