@@ -1,5 +1,9 @@
 import { assert } from 'chai';
 import CompleteMe  from '../scripts/Trie'
+const fs = require('fs');
+const text = "/usr/share/dict/words";
+let dictionary = fs.readFileSync(text).toString().trim().split('\n');
+
 
 describe('CompleteMe', () => {
   const completeMe = new CompleteMe();
@@ -15,10 +19,6 @@ describe('CompleteMe', () => {
 
   it('should have a root with data equal to null', () => {
     assert.deepEqual(completeMe.root.data, null)
-  });
-
-  it('should have an empty array called learned words', () => {
-    assert.deepEqual(completeMe.learnedWords, []);
   });
 
   it('should make a node', () => {
@@ -52,11 +52,14 @@ describe('CompleteMe', () => {
     assert.deepEqual(Object.keys(completeMe.root.children), ['a', 'b', 'c'])
   })
 
-  it.skip('suggest should return children nodes which are words ', () => {
-    completeMe.insert("pizza")
-    var completeWords = completeMe.suggest("piz")
+  it('suggest should return children nodes which are words ', () => {
+    completeMe.insert('pizza')
+    completeMe.insert('cat')
+    var completeWords1 = completeMe.suggest("piz")
+    var completeWords2 = completeMe.suggest('ca')
 
-    assert.deepEqual(completeWords, ["pizza"])
+    assert.deepEqual(completeWords1, ['pizza'])
+    assert.deepEqual(completeWords2, ['cat'])
   })
 
   it('should find a specific node', () => {
@@ -64,5 +67,51 @@ describe('CompleteMe', () => {
     let foundNode = completeMe.findNode('dog')
 
     assert.deepEqual(foundNode.data, 'g')
+  })
+
+  it('should whatever', () => {
+    completeMe.insert('pie');
+    completeMe.insert('pizza');
+
+    var sortedSuggestions = completeMe.suggest('pi')
+
+    completeMe.select('pi', 'pizza');
+
+    var sortedSuggestions2 = completeMe.suggest('pi')
+
+    assert.deepEqual(sortedSuggestions2[0], 'pizza')
+  })
+})
+
+describe('new Trie', () => {
+  let completeMe = new CompleteMe();
+
+  it('should have 235886 words in the dictionary', () => {
+    completeMe.populate(dictionary);
+
+    assert.equal(completeMe.counter, 235886)
+  });
+
+  it('should count the times a word is selected', () => {
+    // completeMe.populate(dictionary);
+    completeMe.select('piz', 'pizza');
+
+    let foundNode = completeMe.findNode('pizza')
+
+    assert.deepEqual(foundNode.selectionCounter, 1)
+  })
+
+  it('should return the most used word first', () => {
+    var completeMe2 = new CompleteMe();
+
+    completeMe2.populate(dictionary);
+    completeMe2.select('ban', 'banal');
+    completeMe.select('qui', 'quixotic')
+
+    let sortedSuggestions = completeMe2.suggest('ban')
+    let sortedSuggestions1 = completeMe.suggest('qui')
+
+    assert.deepEqual(sortedSuggestions[0], 'banal')
+    assert.deepEqual(sortedSuggestions1[0], 'quixotic')
   })
 })

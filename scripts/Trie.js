@@ -4,13 +4,11 @@ require ('locus');
 export default class CompleteMe {
   constructor () {
     this.root = new Node(null);
-    this.learnedWords = [];
+    this.counter = 0;
   }
 
   insert (data) {
     var currentNode = this.root;
-
-    this.learnedWords.push(data);
 
     data.split('').forEach( letter => {
       if (currentNode.children[letter]) {
@@ -20,30 +18,47 @@ export default class CompleteMe {
       currentNode = currentNode.children[letter];
     });
     currentNode.isWord = true;
+    this.counter++;
   }
 
-  count () {
-    return this.learnedWords.length;
-  }
+  // count () {
+  //   return this.counter;
+  // }
 
-  suggest (input) {
+  // suggest (input) {
+  //   let wordSoFarLetterArray = input.split('');
+  //   let currentNode = this.root;
+  //   let suggestions = [];
+  //
+  //   wordSoFarLetterArray.forEach( letter => {
+  //     if (currentNode.children[letter]) {
+  //       currentNode = currentNode.children[letter];
+  //     }
+  //   });
+  //   return this.getWord(currentNode, input, suggestions);
+  // }
+
+  suggest(input) {
     let wordSoFarLetterArray = input.split('');
-    let currentNode = this.root;
-    let suggestions = [];
+    let suggestions = []
 
-    wordSoFarLetterArray.forEach( letter => {
-      if (currentNode.children[letter]) {
-        currentNode = currentNode.children[letter];
-        return;
-      }
-    });
-    return suggestions = this.getWord(currentNode, input, suggestions);
+    let currentChar = wordSoFarLetterArray.shift()
+    let currentNode = this.root;
+
+
+    while (currentNode.children[currentChar]) {
+      currentNode = currentNode.children[currentChar]
+      currentChar = wordSoFarLetterArray.shift()
+    }
+    return this.getWord(currentNode, input, suggestions)
   }
 
   getWord (currentNode, input, suggestions) {
     if (currentNode.isWord) {
-      suggestions.push(input);
+      suggestions.push({word: input,
+        selectedCounter: currentNode.selectionCounter});
     }
+
     let nodeChildrenKeys = Object.keys(currentNode.children);
 
     nodeChildrenKeys.forEach( key => {
@@ -51,9 +66,18 @@ export default class CompleteMe {
 
       this.getWord(nextNode, input + key, suggestions)
     });
-    return suggestions;
+
+    suggestions.sort( (a, b) =>
+      b.selectionCounter - a.selectionCounter
+    )
+
+    let sortedSuggestions = suggestions.map (obj => {
+      return obj['word'];
+    });
+
+    return sortedSuggestions;
   }
-  
+
   findNode (input) {
     let splitArray = input.split('')
     let currentChar = splitArray.shift();
@@ -65,12 +89,21 @@ export default class CompleteMe {
     }
     return currentNode;
   }
-  //
-  // populate () {
-  //
-  // }
-  //
-  // select () {
-  //
-  // }
+
+  populate (data) {
+    data.forEach( word => {
+      this.insert(word);
+    });
+  }
+
+  select (input, selection) {
+    let inputArray = this.suggest(input)
+
+    let selectedWord = inputArray.find( word => {
+      return word === selection;
+    })
+    let foundNode = this.findNode(selectedWord);
+
+    foundNode.selectionCounter++;
+  }
 }
